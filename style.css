@@ -1,45 +1,136 @@
-body{
-  background-color: black;
+*{
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
+body{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url(https://wallpapercave.com/wp/SIkIzca.jpg);
+  font: arial;
+}
+
+.container{
+  width: 80%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.container-header{
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  margin: 1%;
+  display: flex;
+}
 
 h1{
-  font: 'Arial Black';
-  font-size: 60px;
-  text-align: center;
-  color: rgb(255, 230, 0);
-  /*
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: black;
-  */
-  padding: auto;
-}
-
-#info-container{
-  border: 2px solid rgb(255, 230, 0);
-  border-radius: 25px;
   margin: auto;
-  width: 750px;
-  height: 600px;
+  -webkit-text-stroke: 1px;
+  -webkit-text-stroke-color: #ffe81f;
+  font-size: 60px;
+  letter-spacing: 4px;
+  text-shadow:0px 0px 4px #ffe81f;
+}
+
+.container-body{
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background:transparent;
 }
 
 
+
+.container-body-info{
+  width: 80%;
+  height: 100%;
+  display: flex;
+}
+
+ol{
+  color: white;
+  width: 100%;
+  list-style-type: none; 
+}
+
+.nameList{
+  font-size: 20px;
+  text-transform: capitalize;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 4px;
+  border-bottom: 1px solid #ffe81f;
+  padding-bottom: 1%;
+  padding-top: 1%;
+}
+
+ul{
+  color: #ffff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: initial;
+  font-weight: bold;
+  list-style-type: none;
+}
+
+p{
+
+}
+
+.next{
+  width: 100%;
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn{
+  -webkit-text-stroke: 1px;
+  -webkit-text-stroke-color: #ffe81f;
+  border-color: transparent;
+  font-size: 20px;
+  letter-spacing: 4px;
+  max-width: 150px;
+  width: 100%;
+  padding: 15px;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
+  outline: none;
+}
+
+.btn:hover{
+  box-shadow: 0px 0px 22px #ffe81f;
+}
+
+
+/*
 #searchButton{
-  border: 1px solid rgb(255, 230, 0);
+  border: 1px solid r#ffe81f;
   border-radius: 10px;
   background-color: black;
-  color: rgb(255, 230, 0);
+  color: #ffe81f;
   font-size: 30px;
   font: 'arial black';
   height:50px; 
   width:400px; 
-  margin-left: 175px;
-  margin-top: 550px;
-}
-
-#name{
-  font-size: 30px;
-  color: white;
-  padding-left: 30px;
-  text-align: justify;
+  margin-left: 100px;
+  margin-top: 150px;
 }
