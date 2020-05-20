@@ -1,0 +1,45 @@
+body{
+  background-color: black;
+}
+
+
+h1{
+  font: 'Arial Black';
+  font-size: 60px;
+  text-align: center;
+  color: rgb(255, 230, 0);
+  /*
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  */
+  padding: auto;
+}
+
+#info-container{
+  border: 2px solid rgb(255, 230, 0);
+  border-radius: 25px;
+  margin: auto;
+  width: 750px;
+  height: 600px;
+}
+
+
+#searchButton{
+  border: 1px solid rgb(255, 230, 0);
+  border-radius: 10px;
+  background-color: black;
+  color: rgb(255, 230, 0);
+  font-size: 30px;
+  font: 'arial black';
+  height:50px; 
+  width:400px; 
+  margin-left: 175px;
+  margin-top: 550px;
+}
+
+#name{
+  font-size: 30px;
+  color: white;
+  padding-left: 30px;
+  text-align: justify;
+}
