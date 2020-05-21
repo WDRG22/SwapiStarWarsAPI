@@ -55,10 +55,8 @@ h1{
   background:transparent;
 }
 
-
-
 .container-body-info{
-  width: 80%;
+  width: 50%;
   height: 100%;
   display: flex;
 }
@@ -67,17 +65,7 @@ ol{
   color: white;
   width: 100%;
   list-style-type: none; 
-}
-
-.nameList{
-  font-size: 20px;
-  text-transform: capitalize;
-  font-weight: bold;
-  text-align: center;
-  letter-spacing: 4px;
-  border-bottom: 1px solid #ffe81f;
-  padding-bottom: 1%;
-  padding-top: 1%;
+  text-align: left;
 }
 
 ul{
@@ -87,10 +75,24 @@ ul{
   text-transform: initial;
   font-weight: bold;
   list-style-type: none;
+  text-align: center;
 }
 
-p{
+li{
+  margin: auto;
+  padding-bottom: 1%;
+  padding-left: 5%;
+  text-align: left;
+}
 
+.nameList{
+  font-size: 20px;
+  text-transform: capitalize;
+  font-weight: bold;
+  letter-spacing: 4px;
+  border-bottom: 1px solid #ffe81f;
+  padding-bottom: 1%;
+  padding-top: 1%;
 }
 
 .next{
@@ -100,11 +102,11 @@ p{
   justify-content: center;
 }
 
-.btn{
+.nextBtn{
   -webkit-text-stroke: 1px;
   -webkit-text-stroke-color: #ffe81f;
   border-color: transparent;
-  font-size: 20px;
+  font-size: 32px;
   letter-spacing: 4px;
   max-width: 150px;
   width: 100%;
@@ -116,7 +118,7 @@ p{
   outline: none;
 }
 
-.btn:hover{
+.nextBtn:hover{
   box-shadow: 0px 0px 22px #ffe81f;
 }
 
