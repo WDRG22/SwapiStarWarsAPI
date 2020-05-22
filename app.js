@@ -9,23 +9,27 @@ let swapiURLs = [
   'https://swapi.dev/api/people/?page=8',
   'https://swapi.dev/api/people/?page=9']
 
+  //parallel arrays
 let personData  = [];
 let nameData    = [];
 let birthData   = [];
 let worldData   = [];
 
+const searchBar          = document.getElementById('searchBar');
 const listElement        = document.getElementById('list');
 const paginationElement  = document.getElementById('pagination');
-const searchBar          = document.getElementById('searchBar');
-
 const rows               = 10; 
 let currentPage          = 1;
 
+// 
 searchBar.addEventListener('keyup', (e) =>{
-  let searchString = e.target.value;
+  const searchString = e.target.value;
+  let foundNameIndex = [];
   
-})
-
+  for(let i = 0; i < nameData.length; i++)  //populate array with indices of names containing searched string
+    if(nameData[i].includes(searchString))
+      foundNameIndex.push(i);
+});
 
 //  Populate personData array with data from api then display list and setup pagination
 updateData = async () => {
@@ -88,7 +92,7 @@ function displayList(wrapper, rows, page){
 function setupPagination(wrapper, rows){
   
   wrapper.innerHTML = '';
-  console.log(nameData.length)
+  console.log()
   let pageCount     = Math.ceil(nameData.length / rows);       //Includes final page with <10 names
   console.log('HERE: ' + pageCount)
 
