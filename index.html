@@ -2,94 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title></title>
-    <meta name="description" content="HTML5">
-    <meta name="author" content="SitePoint">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swapi</title>
     <link rel="stylesheet" type ="text/css" href="style.css">
 </head>
 
 <body>
+    <header>
+        <h1>Star Wars API</h1>
+    </header>
 
+    <main>
+        <div class='list' id='list'></div>
+        <div class='pagination' id='pagination'></div>
 
-    <div class='container'>       
-        <div class='container-header'>
-            <h1>Star Wars API</h1> 
-        </div>
-        <div class='container-body'>
-            <div class='container-body-info'> 
-                <ol>
-                    <li id='name0' class='nameList'>-
-                        <ul>
-                            <li id='birth0'>-</li>
-                            <li id='world0'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name1' class='nameList'>-
-                        <ul>
-                            <li id='birth1'>-</li>
-                            <li id='world1'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name2' class='nameList'>-
-                        <ul>
-                            <li id='birth2'>-</li>
-                            <li id='world2'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name3' class='nameList'>-
-                        <ul>
-                            <li id='birth3'>-</li>
-                            <li id='world3'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name4' class='nameList'>-
-                        <ul>
-                            <li id='birth4'>-</li>
-                            <li id='world4'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name5' class='nameList'>-
-                        <ul>
-                            <li id='birth5'>-</li>
-                            <li id='world5'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name6' class='nameList'>-
-                        <ul>
-                            <li id='birth6'>-</li>
-                            <li id='world6'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name7' class='nameList'>-
-                        <ul>
-                            <li id='birth7'></li>
-                            <li id='world7'></li>
-                        </ul>
-                    </li>
-                    <li id='name8' class='nameList'>-
-                        <ul>
-                            <li id='birth8'>-</li>
-                            <li id='world8'>-</li>
-                        </ul>
-                    </li>
-                    <li id='name9' class='nameList'>-
-                        <ul>
-                            <li id='birth9'>-</li>
-                            <li id='world9'>-</li>
-                        </ul>
-                    </li>
-                </ol>
-            </div>
-        </div>
-
-        <div class='next'>
-            <button class='nextBtn' id='nextBtn'>Next</button>
-        </div>
-
-    </div>
-
-
-
+    </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" integrity="sha256-T/f7Sju1ZfNNfBh7skWn0idlCBcI3RwdLSS4/I7NQKQ=" crossorigin="anonymous"></script>
     <script src="app.js"></script>
