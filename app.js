@@ -9,7 +9,11 @@ let swapiURLs = [
   'https://swapi.dev/api/people/?page=8',
   'https://swapi.dev/api/people/?page=9']
 
-let characterData    = [];                                        //Array of arrays contains character's name, birth and homeworld
+let characterData = {                                           //global character object
+  name: [],
+  birth: [],
+  world: []
+};
 
 const searchBar          = document.getElementById('searchBar');  //variables for pagination and search bar
 const listElement        = document.getElementById('list');
@@ -17,18 +21,17 @@ const paginationElement  = document.getElementById('pagination');
 const rows               = 10; 
 let currentPage          = 1;
 
-
+//Incomplete
 searchBar.addEventListener('keyup', (e) =>{
-  const searchString = e.target.value;
-  let foundNameIndex = [];
-  
-  for(let i = 0; i < nameData.length; i++)                        //populate array with indices of names containing searched string
-    if(nameData[i].includes(searchString))
-      foundNameIndex.push(i);
+  const searchString = e.target.value;  
+  const foundCharacters = characterData.filter(character => character.includes(searchString));
+
+  displayList(foundCharacters, listElement, rows, currentPage);
+  setupPagination(foundCharacters, paginationElement, rows);
 });
 
-//  Primary function that calls all other functions
-//  Populates characterData array with name, birth, world data from api
+//  Primary function
+//  Populates characterData object name, birth, world arrays with data from api
 //  Displays initial list (first page) then sets up pagination
 updateData = async () => {
 
@@ -48,36 +51,36 @@ updateData = async () => {
     await axios.get(receivedData[i].homeworld).then(response => 
       worldData = worldData.concat(response.data.name));          //fetch homeworld data
 
-    characterData[i] =                                            //populate array of arrays
-    [
-      receivedData[i].name, 
-      receivedData[i].birth_year,
-      worldData[i]
-    ]
+    characterData.name[i] = receivedData[i].name;
+    characterData.birth[i] = receivedData[i].birth_year;
+    characterData.world[i] = worldData[i];
   }
 
   doneLoading();                                                  //remove loading icon, call displayList and setupPagination
-  displayList(listElement, rows, currentPage);
-  setupPagination(paginationElement, rows);
+  displayList(characterData, listElement, rows, currentPage);
+  setupPagination(characterData, paginationElement, rows);
 }
 
 //  Clears wrapper, selects and displays subset of data array based on page  
-function displayList(wrapper, rows, page){
+function displayList(data, wrapper, rows, page){
   wrapper.innerHTML = '';
-  page--;                                                         //match page to zero-based array
+  page--;                                                         //align page with zero-based array
 
   let start = rows * page;
   let end   = start + rows;
 
-  let paginatedCharData = characterData.slice(start, end);
-  console.log(paginatedCharData);
+  let paginatedCharData = {
+    name: data.name.slice(start, end),
+    birth: data.birth.slice(start, end),
+    world: data.world.slice(start, end)
+  }
 
   //loop creates html elements to display data
-  for (let i= 0; i< paginatedCharData.length; i++){
+  for (let i= 0; i< paginatedCharData.name.length; i++){
 
-    let name  = paginatedCharData[i][0];
-    let birth = 'Birth Year:  ' + paginatedCharData[i][1];
-    let world = 'Homeworld:   ' + paginatedCharData[i][2];
+    let name  = paginatedCharData.name[i];
+    let birth = 'Birth Year:  ' + paginatedCharData.birth[i];
+    let world = 'Homeworld:   ' + paginatedCharData.world[i];
 
     let nameElement   = document.createElement('div');             //create div element for each name
     let birthElement  = document.createElement('div');
@@ -98,19 +101,19 @@ function displayList(wrapper, rows, page){
 }
 
 // Determines page count and calls paginationButton for each page
-function setupPagination(wrapper, rows){
+function setupPagination(data, wrapper, rows){
   
   wrapper.innerHTML = '';
-  let pageCount     = Math.ceil(characterData.length / rows);       //Math.ceil includes final page with <10 names
+  let pageCount     = Math.ceil(data.name.length / rows);       //Math.ceil includes final page with <10 names
 
   for(let i = 1; i < pageCount + 1; i++){
-    let btn = paginationButton(i);
+    let btn = paginationButton(data, i);
     wrapper.appendChild(btn);
   }
 }
 
 //  creates and returns button for page, corresponding list on button click
-function paginationButton(page){
+function paginationButton(data, page){
   let button        = document.createElement('button');
   button.innerText  = page;
 
@@ -118,7 +121,7 @@ function paginationButton(page){
 
   button.addEventListener('click', function(){                        //Display list for page of clicked button
     currentPage = page;
-    displayList(listElement, rows, currentPage);
+    displayList(data, listElement, rows, currentPage);
 
     let currentBtn = document.querySelector('.pagination button.active');
     currentBtn.classList.remove('active');
