@@ -1,3 +1,4 @@
+
 let swapiURLs = [
   'https://swapi.dev/api/people/?page=1',
   'https://swapi.dev/api/people/?page=2',
@@ -7,12 +8,13 @@ let swapiURLs = [
   'https://swapi.dev/api/people/?page=6',
   'https://swapi.dev/api/people/?page=7',
   'https://swapi.dev/api/people/?page=8',
-  'https://swapi.dev/api/people/?page=9']
+  'https://swapi.dev/api/people/?page=9'
+]
 
 let characterData = {                                           //global character object
-  name: [],
-  birth: [],
-  world: []
+  names:  [],
+  births: [],
+  worlds: []
 };
 
 const searchBar          = document.getElementById('searchBar');  //variables for pagination and search bar
@@ -21,13 +23,31 @@ const paginationElement  = document.getElementById('pagination');
 const rows               = 10; 
 let currentPage          = 1;
 
-//Incomplete
+//Filters display list as input entered in search bar
 searchBar.addEventListener('keyup', (e) =>{
-  const searchString = e.target.value;  
-  const foundCharacters = characterData.filter(character => character.includes(searchString));
 
-  displayList(foundCharacters, listElement, rows, currentPage);
-  setupPagination(foundCharacters, paginationElement, rows);
+  let foundIndices    = [];                                     //holds indices of found names
+  let foundCharacters = {                                       //object stores filtered results
+    names:  [],
+    births: [],
+    worlds: []
+  };
+
+  const searchString = e.target.value.toLowerCase();  
+
+  for(let i = 0; i < characterData.names.length; i++){             //populates array with indices of found names
+    if (characterData.names[i].toLowerCase().includes(searchString))
+      foundIndices.push(i);
+  }
+
+  for(let i = 0; i < foundIndices.length; i++){                    //populates foundCharacter object arrays
+    foundCharacters.names.push  (characterData.names[foundIndices[i]]);
+    foundCharacters.births.push (characterData.births[foundIndices[i]]);
+    foundCharacters.worlds.push (characterData.worlds[foundIndices[i]]);
+  }
+
+  displayList(foundCharacters, listElement, rows, currentPage);   //display list and setup pagination with
+  setupPagination(foundCharacters, paginationElement, rows);      //filtered results
 });
 
 //  Primary function
@@ -41,21 +61,22 @@ updateData = async () => {
   dataLoading();
 
   for(let i = 0; i < swapiURLs.length; i++){
+
     await axios.get(swapiURLs[i]).then(response => 
       receivedData = receivedData.concat(response.data.results));  //fetch person data
-
-    //--Add error handling--
   }
 
   for (let i = 0; i< receivedData.length; i++){
+
     await axios.get(receivedData[i].homeworld).then(response => 
       worldData = worldData.concat(response.data.name));          //fetch homeworld data
 
-    characterData.name[i] = receivedData[i].name;
-    characterData.birth[i] = receivedData[i].birth_year;
-    characterData.world[i] = worldData[i];
+    characterData.names[i]  = receivedData[i].name;
+    characterData.births[i] = receivedData[i].birth_year;
+    characterData.worlds[i] = worldData[i];
   }
 
+  console.log(characterData);
   doneLoading();                                                  //remove loading icon, call displayList and setupPagination
   displayList(characterData, listElement, rows, currentPage);
   setupPagination(characterData, paginationElement, rows);
@@ -70,17 +91,17 @@ function displayList(data, wrapper, rows, page){
   let end   = start + rows;
 
   let paginatedCharData = {
-    name: data.name.slice(start, end),
-    birth: data.birth.slice(start, end),
-    world: data.world.slice(start, end)
+    names:  data.names.slice(start, end),
+    births: data.births.slice(start, end),
+    worlds: data.worlds.slice(start, end)
   }
 
   //loop creates html elements to display data
-  for (let i= 0; i< paginatedCharData.name.length; i++){
+  for (let i= 0; i < paginatedCharData.names.length; i++){
 
-    let name  = paginatedCharData.name[i];
-    let birth = 'Birth Year:  ' + paginatedCharData.birth[i];
-    let world = 'Homeworld:   ' + paginatedCharData.world[i];
+    let name  = paginatedCharData.names[i];
+    let birth = 'Birth Year:  ' + paginatedCharData.births[i];
+    let world = 'Homeworld:   ' + paginatedCharData.worlds[i];
 
     let nameElement   = document.createElement('div');             //create div element for each name
     let birthElement  = document.createElement('div');
@@ -104,7 +125,7 @@ function displayList(data, wrapper, rows, page){
 function setupPagination(data, wrapper, rows){
   
   wrapper.innerHTML = '';
-  let pageCount     = Math.ceil(data.name.length / rows);       //Math.ceil includes final page with <10 names
+  let pageCount     = Math.ceil(data.names.length / rows);       //Math.ceil includes final page with <10 names
 
   for(let i = 1; i < pageCount + 1; i++){
     let btn = paginationButton(data, i);

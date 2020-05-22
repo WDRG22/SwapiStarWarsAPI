@@ -61,6 +61,9 @@ main{
 
 main .list{
   columns: 2;
+  column-width: 100%;
+  column-gap: 50px;
+  column-rule: 2px solid #ffe81f;
   text-align: center;
   width: 100%;
   max-width: 960px;
@@ -87,6 +90,9 @@ main .list .loader{
 }
 
 main .list .name{
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
   font-weight: bold;
   text-align: center;
   letter-spacing: 6px;
