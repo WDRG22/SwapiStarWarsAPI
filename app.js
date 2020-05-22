@@ -10,21 +10,26 @@ let swapiURLs = [
   'https://swapi.dev/api/people/?page=9']
 
 let personData = [];
+let worldData  = [];
 
-const listElement = document.getElementById('list');
-const paginationElement = document.getElementById('pagination');
-let currentPage = 1;
-const rows = 10; 
+const listElement        = document.getElementById('list');
+const paginationElement  = document.getElementById('pagination');
+let currentPage          = 1;
+const rows               = 10; 
 
-//  Populate personData array with data from api 
+//  Populate personData array with data from api then display list and setup pagination
 updateData = async () => {
+  dataLoading();
 
   for(let i = 0; i < swapiURLs.length; i++){
-    await axios.get(swapiURLs[i]).then(response => personData = personData.concat(response.data.results));
+    await axios.get(swapiURLs[i]).then(response => personData = personData.concat(response.data.results));  
     //--Add error handling--
   }
 
-  console.log(personData);
+  for (let i = 0; i< personData.length; i++){
+    await axios.get(personData[i].homeworld).then(response => worldData = worldData.concat(response.data));
+  }
+  doneLoading();
   displayList(personData, listElement, rows, currentPage);
   setupPagination(personData, paginationElement, rows);
 }
@@ -36,17 +41,29 @@ function displayList(data, wrapper, rows, page){
 
   let start = rows * page;
   let end = start + rows;
-  let paginatedItems = data.slice(start, end);        //select subset from array
+  let paginatedData = data.slice(start, end);        //select subset from array
 
-  for (let i= 0; i< paginatedItems.length; i++){
+  for (let i= 0; i< paginatedData.length; i++){
 
-    let item = paginatedItems[i].name;
-    let itemElement = document.createElement('div');  //create html element for each item
+    let name  = paginatedData[i].name;
+    let birth = 'Birth Year:  ' + paginatedData[i].birth_year;
+    let world = 'Homeworld:   ' + worldData[i].name;
 
-    itemElement.classList.add('item');
-    itemElement.innerText = item;                     //display item
+    let nameElement   = document.createElement('div');  //create html element for each name
+    let birthElement  = document.createElement('div');
+    let worldElement  = document.createElement('div');
 
-    wrapper.appendChild(itemElement);
+    nameElement.classList.add('name');
+    birthElement.classList.add('info');
+    worldElement.classList.add('info');
+
+    nameElement.innerText   = name;                     //display name
+    birthElement.innerText  = birth;
+    worldElement.innerText  = world;
+
+    wrapper.appendChild(nameElement);
+    nameElement.appendChild(birthElement);
+    nameElement.appendChild(worldElement);
   }
 }
 
@@ -55,7 +72,7 @@ function setupPagination(data, wrapper, rows){
   
   wrapper.innerHTML = '';
 
-  let pageCount = Math.ceil(data.length / rows);       //Includes final page with <10 items
+  let pageCount = Math.ceil(data.length / rows);       //Includes final page with <10 names
 
   for(let i = 1; i < pageCount + 1; i++){
     let btn = paginationButton(i, data);
@@ -77,10 +94,23 @@ function paginationButton(page, data){
     let currentBtn = document.querySelector('.pagination button.active');
     currentBtn.classList.remove('active');
     button.classList.add('active');
-
   })
 
   return button;
+}
+
+function dataLoading(){
+  let loadIcon = document.createElement('div');
+  loadIcon.classList.add('loader');
+  loadIcon.id = 'loader';
+
+  let list = document.getElementById('list');
+  list.appendChild(loadIcon);
+}
+
+function doneLoading(){
+  let loadIcon = document.getElementById('loader');
+  loadIcon.style.display = 'none';
 }
 
 updateData();
