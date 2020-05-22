@@ -1,59 +1,86 @@
-//initialize data arrays and declare next button
-let nameArray   = [];
-let birthArray  = [];
-let worldArray  = [];
-let nextBtn     = document.querySelector('#nextBtn');
+let swapiURLs = [
+  'https://swapi.dev/api/people/?page=1',
+  'https://swapi.dev/api/people/?page=2',
+  'https://swapi.dev/api/people/?page=3',
+  'https://swapi.dev/api/people/?page=4',
+  'https://swapi.dev/api/people/?page=5',
+  'https://swapi.dev/api/people/?page=6',
+  'https://swapi.dev/api/people/?page=7',
+  'https://swapi.dev/api/people/?page=8',
+  'https://swapi.dev/api/people/?page=9']
 
-//populate arrays with references to proper html elements
-for(let i=0; i<10; i++){
+let personData = [];
 
-  nameArray[i]  = document.querySelector('#name' + i).childNodes[0];
-  birthArray[i] = document.querySelector('#birth' + i);
-  worldArray[i] = document.querySelector('#world' + i);
+const listElement = document.getElementById('list');
+const paginationElement = document.getElementById('pagination');
+let currentPage = 1;
+const rows = 10; 
+
+//  Populate personData array with data from api 
+updateData = async () => {
+
+  for(let i = 0; i < swapiURLs.length; i++){
+    await axios.get(swapiURLs[i]).then(response => personData = personData.concat(response.data.results));
+    //--Add error handling--
+  }
+
+  console.log(personData);
+  displayList(personData, listElement, rows, currentPage);
+  setupPagination(personData, paginationElement, rows);
 }
 
-function getInfo(){
+//  Clears wrapper, selects and displays subset of data array based on page  
+function displayList(data, wrapper, rows, page){
+  wrapper.innerHTML = '';
+  page--;                                             //match page to zero-based array
 
-  let swapiURL = 'https://swapi.dev/api/people/';
+  let start = rows * page;
+  let end = start + rows;
+  let paginatedItems = data.slice(start, end);        //select subset from array
 
-  //get data from server, update html elements with data
-  axios.get(swapiURL).then(function(response){
-    updateInfo(response.data.results);
-  }).catch(function(){
-    updateInfoError();
+  for (let i= 0; i< paginatedItems.length; i++){
+
+    let item = paginatedItems[i].name;
+    let itemElement = document.createElement('div');  //create html element for each item
+
+    itemElement.classList.add('item');
+    itemElement.innerText = item;                     //display item
+
+    wrapper.appendChild(itemElement);
+  }
+}
+
+//  calls paginationButton for each page
+function setupPagination(data, wrapper, rows){
+  
+  wrapper.innerHTML = '';
+
+  let pageCount = Math.ceil(data.length / rows);       //Includes final page with <10 items
+
+  for(let i = 1; i < pageCount + 1; i++){
+    let btn = paginationButton(i, data);
+    wrapper.appendChild(btn);
+  }
+}
+
+//  creates and returns button for page
+function paginationButton(page, data){
+  let button = document.createElement('button');
+  button.innerText = page;
+
+  if(currentPage === page) button.classList.add('active');
+
+  button.addEventListener('click', function(){           //Display list for page of button
+    currentPage = page;
+    displayList(data, listElement, rows, currentPage);
+
+    let currentBtn = document.querySelector('.pagination button.active');
+    currentBtn.classList.remove('active');
+    button.classList.add('active');
+
   })
+
+  return button;
 }
 
-function updateInfo(data){
-
-  for(let i=0; i< 10; i++){
-
-    nameArray[i].nodeValue  = data[i].name; //update nodeValue so nested lists aren't overwritten
-    birthArray[i].innerText = `Birth Year:  ${data[i].birth_year}`;
-
-    //data[i].homeworld returns url. Request and pass planet data to updatePlanetName(data)
-    axios.get(data[i].homeworld).then(function(response){
-      worldArray[i].innerText = "Home planet: " + response.data.name; 
-    }).catch;
-  }
-}
-
-function updateInfoError(){
-
-  for(let i=0; i< 10; i++){
-
-    nameArray[i].innerText    = 'Oops, error!';
-    birthArray[i].innerText   = '';
-    worldArray[i].innerText   = '';
-  }
-}
-
-function updateWorldsError(){
-
-  for(let i=0; i< 10; i++){
-
-    worldArray[i].innerText = 'Oops, error!'
-  }
-}
-
-nextBtn.addEventListener('click', getInfo);
+updateData();
