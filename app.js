@@ -9,13 +9,23 @@ let swapiURLs = [
   'https://swapi.dev/api/people/?page=8',
   'https://swapi.dev/api/people/?page=9']
 
-let personData = [];
-let worldData  = [];
+let personData  = [];
+let nameData    = [];
+let birthData   = [];
+let worldData   = [];
 
 const listElement        = document.getElementById('list');
 const paginationElement  = document.getElementById('pagination');
-let currentPage          = 1;
+const searchBar          = document.getElementById('searchBar');
+
 const rows               = 10; 
+let currentPage          = 1;
+
+searchBar.addEventListener('keyup', (e) =>{
+  let searchString = e.target.value;
+  
+})
+
 
 //  Populate personData array with data from api then display list and setup pagination
 updateData = async () => {
@@ -27,27 +37,34 @@ updateData = async () => {
   }
 
   for (let i = 0; i< personData.length; i++){
-    await axios.get(personData[i].homeworld).then(response => worldData = worldData.concat(response.data));
+    nameData[i]   = personData[i].name;
+    birthData[i]  = personData[i].birth_year;
+    await axios.get(personData[i].homeworld).then(response => worldData = worldData.concat(response.data.name));
   }
+
   doneLoading();
-  displayList(personData, listElement, rows, currentPage);
-  setupPagination(personData, paginationElement, rows);
+  displayList(listElement, rows, currentPage);
+  setupPagination(paginationElement, rows);
 }
 
 //  Clears wrapper, selects and displays subset of data array based on page  
-function displayList(data, wrapper, rows, page){
+function displayList(wrapper, rows, page){
   wrapper.innerHTML = '';
   page--;                                             //match page to zero-based array
 
   let start = rows * page;
-  let end = start + rows;
-  let paginatedData = data.slice(start, end);        //select subset from array
+  let end   = start + rows;
 
-  for (let i= 0; i< paginatedData.length; i++){
+  let paginatedNames = nameData.slice(start, end);    //create subsets from each array to display per page
+  let paginatedBirth = birthData.slice(start, end);
+  let paginatedWorld = worldData.slice(start, end); 
 
-    let name  = paginatedData[i].name;
-    let birth = 'Birth Year:  ' + paginatedData[i].birth_year;
-    let world = 'Homeworld:   ' + worldData[i].name;
+  //loop creates div elements to display data
+  for (let i= 0; i< paginatedNames.length; i++){
+
+    let name  = paginatedNames[i];
+    let birth = 'Birth Year:  ' + paginatedBirth[i];
+    let world = 'Homeworld:   ' + paginatedWorld[i];
 
     let nameElement   = document.createElement('div');  //create html element for each name
     let birthElement  = document.createElement('div');
@@ -68,28 +85,29 @@ function displayList(data, wrapper, rows, page){
 }
 
 //  calls paginationButton for each page
-function setupPagination(data, wrapper, rows){
+function setupPagination(wrapper, rows){
   
   wrapper.innerHTML = '';
-
-  let pageCount = Math.ceil(data.length / rows);       //Includes final page with <10 names
+  console.log(nameData.length)
+  let pageCount     = Math.ceil(nameData.length / rows);       //Includes final page with <10 names
+  console.log('HERE: ' + pageCount)
 
   for(let i = 1; i < pageCount + 1; i++){
-    let btn = paginationButton(i, data);
+    let btn = paginationButton(i);
     wrapper.appendChild(btn);
   }
 }
 
 //  creates and returns button for page
-function paginationButton(page, data){
-  let button = document.createElement('button');
-  button.innerText = page;
+function paginationButton(page){
+  let button        = document.createElement('button');
+  button.innerText  = page;
 
   if(currentPage === page) button.classList.add('active');
 
   button.addEventListener('click', function(){           //Display list for page of button
     currentPage = page;
-    displayList(data, listElement, rows, currentPage);
+    displayList(listElement, rows, currentPage);
 
     let currentBtn = document.querySelector('.pagination button.active');
     currentBtn.classList.remove('active');
@@ -100,17 +118,17 @@ function paginationButton(page, data){
 }
 
 function dataLoading(){
-  let loadIcon = document.createElement('div');
+  let loadIcon  = document.createElement('div');
+  loadIcon.id   = 'loader';
   loadIcon.classList.add('loader');
-  loadIcon.id = 'loader';
 
   let list = document.getElementById('list');
   list.appendChild(loadIcon);
 }
 
 function doneLoading(){
-  let loadIcon = document.getElementById('loader');
-  loadIcon.style.display = 'none';
+  let loadIcon            = document.getElementById('loader');
+  loadIcon.style.display  = 'none';
 }
 
 updateData();
