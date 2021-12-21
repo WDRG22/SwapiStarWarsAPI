@@ -11,18 +11,12 @@ let swapiURLs = [
   'https://swapi.dev/api/people/?page=9'
 ]
 
-let characterData = {                                           //global character object
-  names:  [],
-  births: [],
-  worlds: []
-};
 // Variables for HTML searchbar, list, and pagination elements
-const searchBar          = document.getElementById('searchBar');  //variables for pagination and search bar
+const searchBar          = document.getElementById('searchBar');
 const listElement        = document.getElementById('list');
 const paginationElement  = document.getElementById('pagination');
-const rows               = 10; 
 let currentPage          = 1;
-let pageCount = swapiURLs.length;
+let pageCount            = swapiURLs.length;
 
 //Filters display list as input entered in search bar
 searchBar.addEventListener('keyup', (e) =>{
@@ -47,8 +41,8 @@ searchBar.addEventListener('keyup', (e) =>{
     foundCharacters.worlds.push (characterData.worlds[foundIndices[i]]);
   }
 
-  displayList(foundCharacters, listElement, rows, currentPage);   //display list and setup pagination with
-  setupPagination(foundCharacters, paginationElement, rows);      //filtered results
+  displayList(foundCharacters, listElement, currentPage);   //display list and setup pagination with
+  setupPagination(foundCharacters, paginationElement);      //filtered results
 });
 
 //  Primary function
@@ -56,17 +50,24 @@ searchBar.addEventListener('keyup', (e) =>{
 //  Displays initial list (first page) then sets up pagination
 updateData = async () => {
 
-  let receivedData   = [];                                         //Used for general data fetching
-  let worldData      = [];                                         //used to fetch homeworld data
+  // Object to contain data of each character from current page
+  let characterData = {                                           
+    names:  [],
+    births: [],
+    worlds: []
+  };
+
+  let receivedData   = [];  // Name and birth year data                                     
+  let worldData      = [];  // Homeworld data                                
   
-  dataLoading();
+  // dataLoading();
 
-  for(let i = 0; i < swapiURLs.length; i++){
+  // Fetch name and birth data
+  await axios.get(swapiURLs[currentPage-1]).then(response => 
+    receivedData = receivedData.concat(response.data.results)); 
 
-    await axios.get(swapiURLs[i]).then(response => 
-      receivedData = receivedData.concat(response.data.results));  //fetch person data
-  }
-
+  // Fetch homeworld data and updata characterData
+  // object with receivedData and worldData
   for (let i = 0; i< receivedData.length; i++){
 
     await axios.get(receivedData[i].homeworld).then(response => 
@@ -77,53 +78,46 @@ updateData = async () => {
     characterData.worlds[i] = worldData[i];
   }
 
-  console.log(characterData);
-  doneLoading();                                                  //remove loading icon, call displayList and setupPagination
-  displayList(characterData, listElement, rows, currentPage);
-  setupPagination(characterData, paginationElement, rows);
+  // Remove loading icon, call displayList and setupPagination
+  // doneLoading(); 
+  displayList(characterData, listElement);
+  setupPagination(characterData, paginationElement);
 }
 
 //  Clears wrapper, selects and displays subset of data array based on page  
-function displayList(data, wrapper, rows, page){
+function displayList(data, wrapper){
+  
+  // Align page number with zero-based array
+  let page = currentPage--;   
   wrapper.innerHTML = '';
-  page--;                                                         //align page with zero-based array
 
-  let start = rows * page;
-  let end   = start + rows;
+  // Create html elements to display data
+  for (let i= 0; i < data.names.length; i++){
 
-  let paginatedCharData = {
-    names:  data.names.slice(start, end),
-    births: data.births.slice(start, end),
-    worlds: data.worlds.slice(start, end)
-  }
-
-  //loop creates html elements to display data
-  for (let i= 0; i < paginatedCharData.names.length; i++){
-
-    let name  = paginatedCharData.names[i];
-    let birth = 'Birth Year:  ' + paginatedCharData.births[i];
-    let world = 'Homeworld:   ' + paginatedCharData.worlds[i];
-
-    let nameElement   = document.createElement('div');             //create div element for each name
+    // Create div element for each name
+    let nameElement   = document.createElement('div');             
     let birthElement  = document.createElement('div');
     let worldElement  = document.createElement('div');
 
-    nameElement.classList.add('name');                             //add css classes for styling
+    // Add css classes for styling
+    nameElement.classList.add('name');                             
     birthElement.classList.add('info');
     worldElement.classList.add('info');
 
-    nameElement.innerText   = name;                                //displays data text
-    birthElement.innerText  = birth;
-    worldElement.innerText  = world;
+    // Displays data text
+    nameElement.innerText   = data.names[i];;                                
+    birthElement.innerText  = 'Birth Year:  ' + data.births[i];;
+    worldElement.innerText  = 'Homeworld:   ' + data.worlds[i];
 
-    wrapper.appendChild(nameElement);                              //append elements to wrapper
+    // Append elements to wrapper
+    wrapper.appendChild(nameElement);                              
     nameElement.appendChild(birthElement);
     nameElement.appendChild(worldElement);
   }
 }
 
 // Determines page count and calls paginationButton for each page
-function setupPagination(data, wrapper, rows){  
+function setupPagination(data, wrapper){  
   wrapper.innerHTML = '';
 
   for(let i = 1; i < pageCount + 1; i++){
@@ -132,16 +126,18 @@ function setupPagination(data, wrapper, rows){
   }
 }
 
-//  creates and returns button for page, corresponding list on button click
+// Creates and returns button for page, corresponding list on button click
 function paginationButton(data, page){
   let button        = document.createElement('button');
   button.innerText  = page;
 
   if(currentPage === page) button.classList.add('active');
 
-  button.addEventListener('click', function(){                        //Display list for page of clicked button
+  // Display list for selected page
+  button.addEventListener('click', function(){                        
     currentPage = page;
-    displayList(data, listElement, rows, currentPage);
+    updateData();
+    displayList(data, listElement, currentPage);
 
     let currentBtn = document.querySelector('.pagination button.active');
     currentBtn.classList.remove('active');
@@ -167,4 +163,4 @@ function doneLoading(){
   loadIcon.style.display  = 'none';
 }
 
-updateData();
+updateData(currentPage);
