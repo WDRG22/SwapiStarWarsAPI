@@ -16,12 +16,13 @@ let characterData = {                                           //global charact
   births: [],
   worlds: []
 };
-
+// Variables for HTML searchbar, list, and pagination elements
 const searchBar          = document.getElementById('searchBar');  //variables for pagination and search bar
 const listElement        = document.getElementById('list');
 const paginationElement  = document.getElementById('pagination');
 const rows               = 10; 
 let currentPage          = 1;
+let pageCount = swapiURLs.length;
 
 //Filters display list as input entered in search bar
 searchBar.addEventListener('keyup', (e) =>{
@@ -122,10 +123,8 @@ function displayList(data, wrapper, rows, page){
 }
 
 // Determines page count and calls paginationButton for each page
-function setupPagination(data, wrapper, rows){
-  
+function setupPagination(data, wrapper, rows){  
   wrapper.innerHTML = '';
-  let pageCount     = Math.ceil(data.names.length / rows);       //Math.ceil includes final page with <10 names
 
   for(let i = 1; i < pageCount + 1; i++){
     let btn = paginationButton(data, i);
