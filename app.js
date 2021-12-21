@@ -87,8 +87,6 @@ updateData = async () => {
 //  Clears wrapper, selects and displays subset of data array based on page  
 function displayList(data, wrapper){
   
-  // Align page number with zero-based array
-  let page = currentPage--;   
   wrapper.innerHTML = '';
 
   // Create html elements to display data
@@ -134,6 +132,9 @@ function paginationButton(data, page){
   if(currentPage === page) button.classList.add('active');
 
   // Display list for selected page
+  // Updates currentPage global variable to selected page
+  // Calls updateDate then displayList
+  // Update styling for selected button
   button.addEventListener('click', function(){                        
     currentPage = page;
     updateData();
@@ -163,4 +164,4 @@ function doneLoading(){
   loadIcon.style.display  = 'none';
 }
 
-updateData(currentPage);
+updateData();
