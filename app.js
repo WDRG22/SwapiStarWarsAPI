@@ -1,4 +1,10 @@
-
+/*    
+//     This program utilizes the Star Wars API (https://swapi.dev/) to display the names, 
+//    birth years, and homeworlds of every Star Wars character represented in the seven
+//    Star Wars films up to The Force Awakens.
+//
+//    Author: William Gibson
+*/
 let swapiURLs = [
   'https://swapi.dev/api/people/?page=1',
   'https://swapi.dev/api/people/?page=2',
@@ -18,7 +24,7 @@ const paginationElement  = document.getElementById('pagination');
 let currentPage          = 1;
 let pageCount            = swapiURLs.length;
 
-//Filters display list as input entered in search bar
+// Searchbar eventlistener filters display list as input is entered in search bar
 searchBar.addEventListener('keyup', (e) =>{
 
   let foundIndices    = [];                                     //holds indices of found names
@@ -45,10 +51,39 @@ searchBar.addEventListener('keyup', (e) =>{
   setupPagination(foundCharacters, paginationElement);      //filtered results
 });
 
-//  Primary function
-//  Populates characterData object name, birth, world arrays with data from api
-//  Displays initial list (first page) then sets up pagination
-updateData = async () => {
+// Creates buttons for pagination
+// Creates buttons for each page with event listeners to fetch page data, update currentPage
+// and update css styling for selected button
+function setupPagination(){ 
+
+  // Creates button for each page
+  for(let i = 1; i < pageCount + 1; i++){
+    let button        = document.createElement('button');
+    button.innerText  = i;
+
+    // Styles button 1 on page load 
+    if(currentPage === i) button.classList.add('active');
+
+    // Event listener for each button
+    button.addEventListener('click', function(){         
+      document.getElementById('list').innerHTML = '';     
+      currentPage = i;
+      fetchData();
+
+      let currentBtn = document.querySelector('.pagination button.active');
+      currentBtn.classList.remove('active');
+      button.classList.add('active');
+    })
+
+    // Appends button to html pagination element
+    paginationElement.appendChild(button);
+  }
+}
+
+//  Fetches data
+//  Populates characterData object names, births, and worlds arrays with data from api
+//  Displays list of current page then sets up pagination (page select buttons)
+fetchData = async () => {
 
   // Object to contain data of each character from current page
   let characterData = {                                           
@@ -60,34 +95,35 @@ updateData = async () => {
   let receivedData   = [];  // Name and birth year data                                     
   let worldData      = [];  // Homeworld data                                
   
-  // dataLoading();
+  // Display loading icon
+  dataLoading();
 
   // Fetch name and birth data
   await axios.get(swapiURLs[currentPage-1]).then(response => 
     receivedData = receivedData.concat(response.data.results)); 
 
-  // Fetch homeworld data and updata characterData
-  // object with receivedData and worldData
+  // Fetch homeworld data and update characterData object with 
+  // receivedData and worldData
   for (let i = 0; i< receivedData.length; i++){
 
     await axios.get(receivedData[i].homeworld).then(response => 
-      worldData = worldData.concat(response.data.name));          //fetch homeworld data
+      worldData = worldData.concat(response.data.name));
 
     characterData.names[i]  = receivedData[i].name;
     characterData.births[i] = receivedData[i].birth_year;
     characterData.worlds[i] = worldData[i];
   }
 
-  // Remove loading icon, call displayList and setupPagination
-  // doneLoading(); 
+  // Remove loading icon and display character list
+  dataDoneLoading();
   displayList(characterData, listElement);
-  setupPagination(characterData, paginationElement);
 }
 
-//  Clears wrapper, selects and displays subset of data array based on page  
-function displayList(data, wrapper){
+// List display function
+// Clears wrapper, selects and displays subset of data array based on page  
+function displayList(data){
   
-  wrapper.innerHTML = '';
+  listElement.innerHTML = '';
 
   // Create html elements to display data
   for (let i= 0; i < data.names.length; i++){
@@ -108,47 +144,13 @@ function displayList(data, wrapper){
     worldElement.innerText  = 'Homeworld:   ' + data.worlds[i];
 
     // Append elements to wrapper
-    wrapper.appendChild(nameElement);                              
+    listElement.appendChild(nameElement);                              
     nameElement.appendChild(birthElement);
     nameElement.appendChild(worldElement);
   }
 }
 
-// Determines page count and calls paginationButton for each page
-function setupPagination(data, wrapper){  
-  wrapper.innerHTML = '';
-
-  for(let i = 1; i < pageCount + 1; i++){
-    let btn = paginationButton(data, i);
-    wrapper.appendChild(btn);
-  }
-}
-
-// Creates and returns button for page, corresponding list on button click
-function paginationButton(data, page){
-  let button        = document.createElement('button');
-  button.innerText  = page;
-
-  if(currentPage === page) button.classList.add('active');
-
-  // Display list for selected page
-  // Updates currentPage global variable to selected page
-  // Calls updateDate then displayList
-  // Update styling for selected button
-  button.addEventListener('click', function(){                        
-    currentPage = page;
-    updateData();
-    displayList(data, listElement, currentPage);
-
-    let currentBtn = document.querySelector('.pagination button.active');
-    currentBtn.classList.remove('active');
-    button.classList.add('active');
-  })
-
-  return button;
-}
-
-//  Displays loading icon
+// Displays loading icon
 function dataLoading(){
   let loadIcon  = document.createElement('div');
   loadIcon.id   = 'loader';
@@ -158,10 +160,12 @@ function dataLoading(){
   list.appendChild(loadIcon);
 }
 
-//  Removes loading icon
-function doneLoading(){
+// Removes loading icon
+function dataDoneLoading(){
   let loadIcon            = document.getElementById('loader');
   loadIcon.style.display  = 'none';
 }
 
-updateData();
+
+setupPagination();
+fetchData();
