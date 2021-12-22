@@ -25,10 +25,15 @@ let currentPage          = 1;
 let pageCount            = swapiURLs.length;
 
 // Searchbar eventlistener filters display list as input is entered in search bar
-searchBar.addEventListener('keyup', (e) =>{
+/*searchBar.addEventListener('keyup', (e) =>{
 
-  let foundIndices    = [];                                     //holds indices of found names
-  let foundCharacters = {                                       //object stores filtered results
+  // Clear list and pagination elements and display loading indicator
+  listElement.innerHTML = '';
+  paginationElement.innerHTML = '';
+  dataLoading();
+
+  let foundIndices    = [];   // Holds indices of found names
+  let foundCharacters = {     // Object stores filtered results
     names:  [],
     births: [],
     worlds: []
@@ -47,9 +52,8 @@ searchBar.addEventListener('keyup', (e) =>{
     foundCharacters.worlds.push (characterData.worlds[foundIndices[i]]);
   }
 
-  displayList(foundCharacters, listElement, currentPage);   //display list and setup pagination with
-  setupPagination(foundCharacters, paginationElement);      //filtered results
 });
+*/
 
 // Creates buttons for pagination
 // Creates buttons for each page with event listeners to fetch page data, update currentPage
