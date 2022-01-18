@@ -148,6 +148,12 @@ button:hover{
 button:active{
   color: #000;
   background-color: #ffe81f;
-  box-shadow: inset 0px 0px 12px black;
+  box-shadow: inset 0px 0px 32px black;
   font-size: 16px;
+}
+
+button.selected{
+  color: #000;
+  background-color: #ffe81f;
+  font-size: 20px;
 }

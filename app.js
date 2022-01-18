@@ -66,7 +66,7 @@ function setupPagination(){
     button.innerText  = i;
 
     // Styles button 1 on page load 
-    if(currentPage === i) button.classList.add('active');
+    if(currentPage === i) button.classList.add('selected');
 
     // Event listener for each button
     button.addEventListener('click', function(){         
@@ -76,7 +76,9 @@ function setupPagination(){
 
       let currentBtn = document.querySelector('.pagination button.active');
       currentBtn.classList.remove('active');
+      currentBtn.classList.remove('selected');
       button.classList.add('active');
+      button.classList.add('selected');
     })
 
     // Appends button to html pagination element
